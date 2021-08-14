@@ -5,26 +5,15 @@ export interface UADataValues {
     model: string;
     uaFullVersion: string;
 }
-export interface AgentVersionInfo {
+
+export interface AgentBrowserInfo {
     name: string;
     version: string;
-    majorVersion: number;
 }
-
-
-export interface AgentOSInfo extends AgentVersionInfo {}
-
-export interface AgentBrowserInfo extends AgentVersionInfo {
-    webkit: boolean;
-    webkitVersion: string;
-    chromium: boolean;
-    chromiumVersion: string;
-    webview: boolean;
-}
-
 export interface AgentInfo {
     isMobile: boolean;
-    isHints: boolean;
+    isDesktop: boolean;
+    browser: AgentBrowserInfo
 }
 
 export interface NavigatorUABrandVersion {
@@ -32,9 +21,12 @@ export interface NavigatorUABrandVersion {
     version: string;
 }
 
-export interface NavigatorUAData {
-    brands?: NavigatorUABrandVersion[];
-    uaList?: NavigatorUABrandVersion[];
-    mobile: boolean;
-    getHighEntropyValues<T extends keyof UADataValues>(hints: T[]): Promise<{ [key in T]: UADataValues[T] }>;
+export interface PresetInfo {
+    test: string;
+    id: string;
+}
+
+export interface PresetResult {
+    preset: PresetInfo | null;
+    version: string;
 }

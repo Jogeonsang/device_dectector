@@ -1,14 +1,15 @@
 import { AgentInfo } from './types'
-import { userAgent } from './userAgent'
-import { userAgentData } from './userAgentData'
+import { parseUserAgent } from './userAgent'
+import { parseUserAgentData } from './userAgentData'
 
 
-function agent() {
-    console.log(navigator.userAgentData)
+export function agent():AgentInfo {
     if (navigator.userAgentData === undefined) {
-        return userAgent()
+        return parseUserAgent()
     }
-    return userAgentData()
+    return parseUserAgentData()
 }
 
 export const isMobile = agent().isMobile
+export const isDesktop = agent().isDesktop
+export const browser = agent().browser

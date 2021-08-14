@@ -1,17 +1,6 @@
-import { NavigatorUABrandVersion } from "./types";
-export function getUserAgent(): string {
-    let userAgent = navigator.userAgent;
-    if (typeof userAgent === "undefined") {
-        if (typeof navigator === "undefined" || !navigator) {
-            return "";
-        }
+import { PresetInfo, PresetResult} from "./types";
 
-        userAgent = navigator.userAgent || "";
-    }
-    return userAgent!.toLowerCase();
-}
-
-export function some<T>(arr: T[], callback: (value: T, index: number) => any): boolean {
+export function some<T, U>(arr: T[], callback: (value: T, index: number) => U): boolean {
     const length = arr.length;
 
     for (let i = 0; i < length; ++i) {
@@ -23,15 +12,39 @@ export function some<T>(arr: T[], callback: (value: T, index: number) => any): b
     return false;
 }
 
-export function getBrowserVender(brand?: NavigatorUABrandVersion) {
-    let broswerEnv = { vender: 'unknown', version: 0};
-    if (brand) {
-        if (brand.brand === 'Chromium') { 
-            broswerEnv.vender = 'chrom';
-            broswerEnv.version = parseInt(brand.version)
-            return broswerEnv
-        }
-    } else {
-        
+export function execRegExp(pattern: string, text: string): RegExpExecArray | null {
+    try {
+        return new RegExp(pattern, "g").exec(text);
+    } catch (e) {
+        return null;
     }
+}
+
+export function findPreset(presets:PresetInfo[], agent: string): PresetResult {
+    let userPreset: PresetInfo | null = null;
+    let version = "-1";
+
+    some(presets, preset => {
+        const result = execRegExp(`(${preset.test})((?:\\/|\\s|:)([0-9|\\.|_]+))?`, agent);
+
+        if (!result) {
+            return false;
+        }
+
+        userPreset = preset
+        version = result[3] || '-1'
+
+        return true
+    })
+
+    return {
+        preset: userPreset,
+        version,
+    };
+}
+
+export function getIsMobile(agent: string) {
+    const device = ['iPhone', 'iPod', 'Android', 'Windows CE', 'BlackBerry', 'Symbian', 'Windows Phone', 'webOS', 'Opera Mini', 'Opera Mobi', 'POLARIS', 'IEMobile', 'lgtelecom', 'nokia', 'SonyEricsson', 'LG', 'SAMSUNG'].join('|');
+    const regExp = new RegExp(device, 'i').test(agent)
+    return regExp
 }
